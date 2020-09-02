@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29806.167
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Portal", "Portal", "{0D62B67C-60C7-4042-84C9-AE5B00916F63}"
+	ProjectSection(SolutionItems) = preProject
+		AnimalAdoption.Web.Portal\wwwroot\css\site.css = AnimalAdoption.Web.Portal\wwwroot\css\site.css
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logic", "Logic", "{CE923B50-C0C0-48CE-B00E-FAFCD96DF11E}"
 EndProject

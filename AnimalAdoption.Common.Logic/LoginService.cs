@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AnimalAdoption.Common.Logic
+﻿namespace AnimalAdoption.Common.Logic
 {
     public class LoginService
     {
@@ -41,7 +37,7 @@ namespace AnimalAdoption.Common.Logic
                     name = "Murphy";
                     break;
                 case "placeholder":
-                    name = "Placeholder";
+                    name = "hello";
                     break;
             }
             return name;
