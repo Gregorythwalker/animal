@@ -42,11 +42,11 @@ jobs:
     - name: Setup MSBuild.exe
       uses: warrenbuckley/Setup-MSBuild@v1
     - name: MSBuild Restore
-      run: msbuild ./AnimalAdoption.Common.Logic.csproj /p:Configuration="Release" /t:restore     
+      run: msbuild ${{ github.workspace }}/AnimalAdoption.Common.Logic/AnimalAdoption.Common.Logic.csproj /p:Configuration="Release" /t:restore     
     - name: MSBuild Build
-      run: msbuild ./AnimalAdoption.Common.Logic.csproj /p:Configuration="Release"
+      run: msbuild ${{ github.workspace }}/AnimalAdoption.Common.Logic/AnimalAdoption.Common.Logic.csproj /p:Configuration="Release"
     - name: MSBuild Pack
-      run: msbuild ./AnimalAdoption.Common.Logic.csproj /p:Configuration="Release" /t:pack 
+      run: msbuild ${{ github.workspace }}/AnimalAdoption.Common.Logic/AnimalAdoption.Common.Logic.csproj /p:Configuration="Release" /t:pack 
     #-p:PackageVersion=1.0.2 
     - name: Setup Nuget.exe
       uses: warrenbuckley/Setup-Nuget@v1        
