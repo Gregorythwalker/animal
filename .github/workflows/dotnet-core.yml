@@ -1,63 +1,50 @@
 name: .NET Core
+
 on:
   push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+    branches: [ master ]
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest #ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 3.1.301
-      - name: Install dependencies
-        run: dotnet restore
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-        # - name: Test
-        #   run: dotnet test --no-restore --verbosity normal
-      - name: List out directory contents
-        run: |
-          echo "Listing the contents of the GitHub workspace directory"
-          ls ${{ github.workspace }}
-          echo "Recursively listing all contents of the current directory"
-          ls -R    
-      - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v2.1.4
-        with:
-          # Artifact name
-          name: ccc-animal
-          # A file, directory or wildcard pattern that describes what to upload
-          path: ./AnimalAdoption.Web.Portal/bin/Release
-          # The desired behavior if no files are found using the provided path.
-          if-no-files-found: warn   
-  build_pack_publish:
-    runs-on: windows-latest
-    name: Build
-    steps:
-    - uses: actions/checkout@v1       
-    - name: Setup MSBuild.exe
-      uses: warrenbuckley/Setup-MSBuild@v1
-    - name: MSBuild Restore
-      run: msbuild ${{ github.workspace }}/AnimalAdoption.Common.Logic/AnimalAdoption.Common.Logic.csproj /p:Configuration="Release" /t:restore     
-    - name: MSBuild Build
-      run: msbuild ${{ github.workspace }}/AnimalAdoption.Common.Logic/AnimalAdoption.Common.Logic.csproj /p:Configuration="Release"
-    - name: MSBuild Pack
-      run: msbuild ${{ github.workspace }}/AnimalAdoption.Common.Logic/AnimalAdoption.Common.Logic.csproj /p:Configuration="Release" /t:pack 
-    #-p:PackageVersion=1.0.2 
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    
+    # publish nuget packages -- start
+    - name: Pack Packages
+      run: dotnet pack ./AnimalAdoption.Common.Logic/AnimalAdoption.Common.Logic.csproj --configuration Release --no-build --output Gregorythwalker.animal\nupkgs\Release
+    
     - name: Setup Nuget.exe
-      uses: warrenbuckley/Setup-Nuget@v1        
-    - name: Nuget SetAPIKey
-      run: nuget setApiKey ${{ secrets.nugetpackage }}
-    - name: Nuget Push
-      run: nuget push .\bin\Release\*.nupkg -Source https://api.nuget.org/v3/index.json
-      continue-on-error: true    
+      uses: warrenbuckley/Setup-Nuget@v1
+      
     - name: Nuget Add Source
-      run: nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/emiliano84/index.json" -UserName emiliano84 -Password ${{ secrets.nugetpackage }}
+      run: nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/Gregorythwalker/index.json" -UserName Gregorythwalker -Password ${{ secrets.nugetpackage }}
+
     - name: Nuget SetAPIKey
       run: nuget setApiKey ${{ secrets.nugetpackage }} -Source "GitHub"
+
     - name: Nuget Push
-      run: nuget push animal\bin\Release\*.nupkg -Source "GitHub"
+      run: nuget push Gregorythwalker.animal\nupkgs\Release\*.nupkg -Source "GitHub"
+    # publish nuget packages -- end
+      
+    - name: Test
+      run: dotnet test ./AnimalAdoption.Web.Portal.UnitTests/AnimalAdoption.Web.Portal.UnitTests.csproj --no-restore --verbosity normal
+    - name: List out directory contents
+      run: echo "Listing the contents of the GitHub workspace directory" ls ${{ github.workspace }} echo "Recursively listing all contents of the current directory" ls -R
+  
+    - name: Publish
+      run: dotnet publish ./AnimalAdoption.Web.Portal/AnimalAdoption.Web.Portal.csproj --configuration Release --no-build --output ${{ github.workspace }}/taa-portal/
+    - uses: actions/upload-artifact@v2
+      with:
+        name: animal-adoption-portal-artifact
+        path: ${{ github.workspace }}/aniaml/
+      
