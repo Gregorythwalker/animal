@@ -38,36 +38,26 @@ jobs:
     runs-on: windows-latest
     name: Build
     steps:
-    - uses: actions/checkout@v1   
-    
+    - uses: actions/checkout@v1       
     - name: Setup MSBuild.exe
       uses: warrenbuckley/Setup-MSBuild@v1
-
     - name: MSBuild Restore
       run: msbuild .NET Core\AnimalAdoption.Common.Logic.csproj /p:Configuration="Release" /t:restore     
-
     - name: MSBuild Build
       run: msbuild .NET Core\AnimalAdoption.Common.Logic.csproj /p:Configuration="Release"
-
     - name: MSBuild Pack
       run: msbuild .NET Core\AnimalAdoption.Common.Logic.csproj /p:Configuration="Release" /t:pack 
     #-p:PackageVersion=1.0.2 
-
     - name: Setup Nuget.exe
-      uses: warrenbuckley/Setup-Nuget@v1
-        
+      uses: warrenbuckley/Setup-Nuget@v1        
     - name: Nuget SetAPIKey
       run: nuget setApiKey ${{ secrets.nugetpackage }}
-
     - name: Nuget Push
       run: nuget push .NET Core\bin\Release\*.nupkg -Source https://api.nuget.org/v3/index.json
-      continue-on-error: true
-    
+      continue-on-error: true    
     - name: Nuget Add Source
-      run: nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/emiliano84/index.json" -UserName emiliano84 -Password ${{ secrets.PACKAGES_TOKEN }}
-
+      run: nuget source Add -Name "GitHub" -Source "https://nuget.pkg.github.com/emiliano84/index.json" -UserName emiliano84 -Password ${{ secrets.nugetpackage }}
     - name: Nuget SetAPIKey
-      run: nuget setApiKey ${{ secrets.PACKAGES_TOKEN }} -Source "GitHub"
-
+      run: nuget setApiKey ${{ secrets.nugetpackage }} -Source "GitHub"
     - name: Nuget Push
       run: nuget push Yugen.Toolkit.Standard\bin\Release\*.nupkg -Source "GitHub"
